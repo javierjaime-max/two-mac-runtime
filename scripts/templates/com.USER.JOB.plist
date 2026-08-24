@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  launchd template — MacBook-BOUND jobs ONLY (Law 1: anything that can run on
+  the Mini runs on the Mini via cron instead).
+
+  1. Replace USER and JOB everywhere (label, paths).
+  2. Install:  cp com.USER.JOB.plist ~/Library/LaunchAgents/
+               launchctl load ~/Library/LaunchAgents/com.USER.JOB.plist
+  3. Retire:   launchctl unload ... then move the plist to
+               ~/Library/LaunchAgents/_retired/ — never delete it.
+
+  RunAtLoad=true means the job also fires at login/wake — laptop jobs MUST be
+  idempotent because of this. StartInterval only counts while awake; that is
+  why nothing fleet-critical lives here.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.USER.JOB</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/python3</string>
+        <string>/Users/USER/scripts/JOB.py</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>900</integer><!-- seconds; 900 = 15 min -->
+    <key>RunAtLoad</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/JOB.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/JOB.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>
